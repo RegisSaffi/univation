@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">UNIVATION</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Help</string>
+    <string name="search_university_of_rwanda">Search university</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
