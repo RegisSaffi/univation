@@ -81,14 +81,14 @@ public class buildingAdapter extends RecyclerView.Adapter<buildingAdapter.ViewHo
 		Viewholder.name.setText(building.getName());
 		Viewholder.desc.setText(building.getDesc());
 
-        Viewholder.locate.setImageDrawable(VectorDrawableCompat.create(context.getResources(),R.drawable.ic_place_black_24dp,context.getTheme()));
+       // Viewholder.locate.setImageDrawable(VectorDrawableCompat.create(context.getResources(),R.drawable.ic_place_black_24dp,context.getTheme()));
 
         Picasso.with(context)
                 .load(building.getImage())
                 .placeholder(R.mipmap.ic_launcher)
                 .into(Viewholder.image);
 
-        Viewholder.locate.setOnClickListener(v->listener.locateClickListener(building.getLocation()));
+        Viewholder.itemView.setOnClickListener(v->listener.locateClickListener(building.getLocation()));
 
     }
 
