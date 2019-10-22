@@ -7,7 +7,7 @@
     android:layout_height="600dp"
 	android:background="#00000000"
 	android:orientation="vertical"
-    app:behavior_hideable="false"
+    app:behavior_hideable="true"
     app:behavior_peekHeight="60dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
 	>
@@ -41,24 +41,14 @@
 
 					<TextView
 						android:layout_width="wrap_content"
-						android:text="View from list"
+						android:text="Buildings list"
 						android:textColor="@color/white"
 						android:textStyle="bold"
 						android:layout_centerInParent="true"
 						android:textSize="18sp"
 						android:layout_height="wrap_content" />
 
-					<ImageView
-						android:id="@+id/toggle"
-						android:layout_width="50dp"
-						android:layout_height="50dp"
-						android:layout_marginRight="10dp"
-						android:layout_alignParentRight="true"
-						android:tint="@color/white"
-						app:srcCompat="@drawable/ic_keyboard_arrow_up_black_24dp"
-						android:layout_gravity="end"
-						android:layout_marginEnd="10dp"
-						android:layout_alignParentEnd="true" />
+
 
 				</RelativeLayout>
 			</RelativeLayout>
@@ -109,6 +99,7 @@
 						android:layout_margin="10dp"
 						android:hint="Search"
 						android:focusedByDefault="false"
+						android:focusableInTouchMode="false"
 						android:background="@drawable/edittext_bg"
 						android:paddingLeft="10dp"
 						android:layout_height="40dp" />

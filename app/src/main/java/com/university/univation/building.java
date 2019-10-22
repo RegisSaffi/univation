@@ -1,6 +1,7 @@
 package com.university.univation;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 public class building
 {
@@ -12,6 +13,7 @@ public class building
 	public String image="ggghyu";
 
 	private LatLng location;
+	Marker marker;
 
 	public void setLocation(LatLng location){this.location=location;}
 	public LatLng getLocation(){return location;}
@@ -69,5 +71,7 @@ public class building
 		this.image=image;
 	}
 
+	public void setMarker(Marker marker){this.marker=marker;}
+	public Marker getMarker(){return marker;}
 
 }

@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -46,6 +48,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,9 +90,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     buildingAdapter buildingAdapter;
 
     BottomSheetBehavior sheetBehavior;
+    BottomSheetBehavior sheetBehavior2;
 
     ImageView city,toggle;
     EditText search;
+
+    FloatingActionButton fab;
+
+    ImageView image;
+    TextView title,overview,title1;
+
+    Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,38 +115,93 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar=findViewById(R.id.progress);
         toggle=findViewById(R.id.toggle);
 
+        image=findViewById(R.id.image);
+        fab=findViewById(R.id.fab);
+        title=findViewById(R.id.title);
+        title1=findViewById(R.id.title1);
+        overview=findViewById(R.id.overview);
+
+
         search=findViewById(R.id.search);
         preferences=getSharedPreferences("univation",MODE_PRIVATE);
 
         recyclerView=findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        buildingAdapter=new buildingAdapter(buildings1, this, loc -> {
+        buildingAdapter=new buildingAdapter(buildings1, this, (loc,tit,desc,img,mrk) -> {
 
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc,20));
+            if(img!=null) {
+                Picasso.with(getApplicationContext())
+                        .load("http://baza.itdevs.rw/univation/images/"+img)
+                        .placeholder(R.drawable.ur_logo)
+                        .into(image);
+            }
+
+            mrk.showInfoWindow();
+            title.setText(tit);
+            title1.setText(tit);
+            overview.setText(desc);
+            sheetBehavior2.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc,19));
 
         });
         recyclerView.setAdapter(buildingAdapter);
 
         city=findViewById(R.id.city);
         city.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_location_city_black_24dp,getTheme()));
-        toggle.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_keyboard_arrow_up_black_24dp,getTheme()));
-
+        //toggle.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_keyboard_arrow_up_black_24dp,getTheme()));
 
         sheetBehavior=BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
-        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        sheetBehavior2=BottomSheetBehavior.from(findViewById(R.id.bottom_sheet2));
+        sheetBehavior2.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
-
+                        fab.setVisibility(View.VISIBLE);
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED: {
+                        sheetBehavior2.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        fab.setVisibility(View.GONE);
                         toggle.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_keyboard_arrow_down_black_24dp,getTheme()));
 
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        toggle.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_keyboard_arrow_up_black_24dp,getTheme()));
+
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        sheetBehavior2.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                         fab.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED: {
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        fab.setVisibility(View.GONE);
+                        toggle.setImageDrawable(VectorDrawableCompat.create(getResources(),R.drawable.ic_keyboard_arrow_down_black_24dp,getTheme()));
 
                     }
                     break;
@@ -157,11 +223,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        toggle.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 toggleBottomSheet();
+            }
+        });
+
+        toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                toggleBottomSheet2();
             }
         });
 
@@ -185,11 +259,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     void toggleBottomSheet(){
-        if(sheetBehavior.getState()==BottomSheetBehavior.STATE_COLLAPSED){
+        if(sheetBehavior.getState()==BottomSheetBehavior.STATE_HIDDEN){
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             return;
         }
-        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    }
+
+    void toggleBottomSheet2(){
+        if(sheetBehavior2.getState()==BottomSheetBehavior.STATE_COLLAPSED){
+            sheetBehavior2.setState(BottomSheetBehavior.STATE_EXPANDED);
+            return;
+        }
+        sheetBehavior2.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
@@ -289,9 +371,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Where you are now!");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
-        mMap.addMarker(markerOptions);
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+        if(marker!=null){
+            marker.remove();
+        }
+       marker= mMap.addMarker(markerOptions);
 
     }
 
@@ -371,6 +456,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+       // marker.showInfoWindow();
         return false;
     }
 
@@ -471,7 +557,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                Toast.makeText(MapsActivity.this,"No internet",Toast.LENGTH_LONG).show();
 
            }else
-            if(result.substring(0,1).equals("["))
+            if(result.startsWith("["))
             {
                 SharedPreferences.Editor editor=preferences.edit();
                 editor.putString("buildings",result);
@@ -497,12 +583,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     String name = obj.getString("building_name");
                     String desc = obj.getString("building_description");
-                    //String image = obj.getString("building_image");
+                    String img = obj.getString("building_image");
                     String id = obj.getString("building_id");
                     String data= obj.getString("data");
 
                     building=new building();
                     building.setId(id);
+                    building.setImage(img);
                     building.setData(data);
                     building.setDesc(desc);
                     building.setName(name);
@@ -523,21 +610,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .fillColor(getResources().getColor(R.color.grey));
 
                     building.setLocation(getPolygonCenterPoint(dataOptions.getPoints()));
-                    buildings1.add(building);
 
                     mMap.addPolygon(dataOptions);
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(getPolygonCenterPoint(dataOptions.getPoints()));
                     markerOptions.title(name);
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    markerOptions.snippet(desc.toLowerCase().contains("no description")?desc:desc.substring(name.length())+"...");
 
-                    mMap.addMarker(markerOptions);
+                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.icon));
+                  Marker marker1=  mMap.addMarker(markerOptions);
                     mMap.setOnMarkerClickListener(marker -> {
 
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),20));
+                        marker.showInfoWindow();
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),19));
 
                         return true;
                     });
+
+                    building.setMarker(marker1);
+                    buildings1.add(building);
+
+                    mMap.setOnInfoWindowClickListener(marker -> {
+                        for(building b:buildings1){
+                            if(b.getName().trim().equals(marker.getTitle())){
+
+                                if(b.getImage()!=null) {
+                                    Picasso.with(getApplicationContext())
+                                            .load("http://baza.itdevs.rw/univation/images/"+img)
+                                            .placeholder(R.drawable.ur_logo)
+                                            .into(image);
+                                }
+
+                                title.setText(b.getName());
+                                title1.setText(b.getName());
+                                overview.setText(marker.getSnippet());
+                                sheetBehavior2.setState(BottomSheetBehavior.STATE_HIDDEN);
+                                sheetBehavior2.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            }
+                        }
+
+                    });
+
+
 
 //                        final int POLYGON_PADDING_PREFERENCE = 200;
 //                        final LatLngBounds latLngBounds = getPolygonLatLngBounds(dataOptions.getPoints());
@@ -553,7 +667,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
         }
-
 
     private static LatLngBounds getPolygonLatLngBounds(final List<LatLng> polygon) {
         final LatLngBounds.Builder centerBuilder = LatLngBounds.builder();
@@ -576,12 +689,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return centerLatLng;
     }
 
-
     @Override
     public void onBackPressed() {
 
         if(sheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED){
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }else if(sheetBehavior2.getState()==BottomSheetBehavior.STATE_EXPANDED || sheetBehavior2.getState()==BottomSheetBehavior.STATE_COLLAPSED){
+            sheetBehavior2.setState(BottomSheetBehavior.STATE_HIDDEN);
         }else {
             super.onBackPressed();
         }

@@ -17,7 +17,7 @@
         android:layout_margin="20dp"
         android:adjustViewBounds="true"
         android:layout_centerInParent="true"
-        android:src="@drawable/cover_primary"
+        android:src="@drawable/ur_logo"
         />
 
 

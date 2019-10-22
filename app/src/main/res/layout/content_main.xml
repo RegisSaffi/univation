@@ -17,29 +17,29 @@
         android:id="@+id/rounder"
         android:layout_width="match_parent"
         android:layout_marginTop="-200dp"
-        android:layout_marginLeft="-50dp"
-        android:layout_marginRight="-50dp"
+        android:layout_marginLeft="-200dp"
+        android:layout_marginRight="-200dp"
         android:background="@drawable/big_rounder"
-        android:layout_height="400dp"/>
+        android:layout_height="350dp"/>
 
 
     <ImageView
         android:id="@+id/cover"
         android:layout_width="150dp"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_margin="10dp"
         android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
         android:adjustViewBounds="true"
-        app:srcCompat="@drawable/cover_white" />
+        android:src="@drawable/ic_cover" />
     
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="20dp"
         android:layout_below="@+id/cover"
       >
 

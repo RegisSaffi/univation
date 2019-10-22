@@ -26,7 +26,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
-                    app:srcCompat="@mipmap/ic_launcher"
+                    app:srcCompat="@drawable/ur_logo"
                     android:layout_gravity="end"
                     android:layout_marginEnd="10dp"
                    />
@@ -50,6 +50,7 @@
                     android:id="@+id/desc"
                     android:layout_width="wrap_content"
                     android:text="Description"
+                    android:maxLines="2"
                     android:textColor="#848484"
                     android:layout_height="wrap_content" />
 

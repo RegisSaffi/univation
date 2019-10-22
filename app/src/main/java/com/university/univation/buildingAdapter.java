@@ -24,6 +24,7 @@ import android.app.*;
 import android.net.*;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.squareup.picasso.Picasso;
 
 import java.io.*;
@@ -88,7 +89,7 @@ public class buildingAdapter extends RecyclerView.Adapter<buildingAdapter.ViewHo
                 .placeholder(R.mipmap.ic_launcher)
                 .into(Viewholder.image);
 
-        Viewholder.itemView.setOnClickListener(v->listener.locateClickListener(building.getLocation()));
+        Viewholder.itemView.setOnClickListener(v->listener.locateClickListener(building.getLocation(),building.getName(),building.getDesc(),building.getImage(),building.getMarker()));
 
     }
 
@@ -117,7 +118,7 @@ public class buildingAdapter extends RecyclerView.Adapter<buildingAdapter.ViewHo
     }
 
     public interface BuildingListener{
-        void locateClickListener(LatLng loc);
+        void locateClickListener(LatLng loc, String title, String desc, String image, Marker m);
     }
 	
 }
